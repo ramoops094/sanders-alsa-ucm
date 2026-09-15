@@ -1,0 +1,18 @@
+image: fedora:latest
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+    - if: '$CI_PIPELINE_SOURCE == "api"'
+    - when: never
+
+stages:
+  - validate
+
+validate-ucm:
+  stage: validate
+  when: manual
+  script:
+    - dnf -y install alsa-lib-devel git make python3
+    - git clone --depth 1 https://github.com/alsa-project/alsa-tests.git /tmp/alsa-tests
+    - make -C /tmp/alsa-tests/python/ucm-validator2 configs ALSA_UCM_DIR="$CI_PROJECT_DIR/ucm2"
